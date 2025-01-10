@@ -84,10 +84,13 @@ def encode_binary_features(df: pd.DataFrame, logger) -> pd.DataFrame:
     """Converts binary and categorical features to numeric."""
     logger.info("Encoding binary and categorical features")
 
-    # Convert binary columns
+    # Convert binary columns - first map True/False to 1/0 explicitly
     binary_cols = ['Amenity', 'Bump', 'Crossing', 'Give_Way', 'Junction', 'No_Exit',
                   'Railway', 'Roundabout', 'Station', 'Stop', 'Traffic_Calming', 'Traffic_Signal']
-    df[binary_cols] = df[binary_cols].astype(int)
+    
+    for col in binary_cols:
+        df[col] = df[col].map({True: 1, False: 0})
+        logger.info(f"Converted {col} to binary (0/1): Counts - 1s: {df[col].sum()}, 0s: {len(df[col]) - df[col].sum()}")
 
     # Convert Sunrise_Sunset
     df['Sunrise_Sunset'] = df['Sunrise_Sunset'].map({'Day': 1, 'Night': 0})
