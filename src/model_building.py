@@ -7,16 +7,9 @@ from sklearn.metrics import accuracy_score, classification_report
 from category_encoders import TargetEncoder
 from logger import setup_logger
 
+# logger = setup_logger("model_building")
 
-# Load the featured dataset
-def load_data(file_path: str, logger) -> pd.DataFrame:
-    """Loads the featured dataset from CSV."""
-    logger.info(f"Loading data from {file_path}")
-    df = pd.read_csv(file_path)
-    logger.info(f"Loaded {len(df)} rows and {len(df.columns)} columns")
-    return df
 
-load_data(file_path='data/featured_data.csv', logger=setup_logger())
+df = pd.read_csv('data/featured_data.csv')
 
-import pandas as pd
-df = pd.read_csv(r'.\data\processed\featured_data.csv')
+df.head()

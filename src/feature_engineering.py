@@ -84,9 +84,9 @@ def encode_binary_features(df: pd.DataFrame, logger) -> pd.DataFrame:
     """Converts binary and categorical features to numeric."""
     logger.info("Encoding binary and categorical features")
 
-    # Convert binary columns - first map True/False to 1/0 explicitly
+    # Convert binary columns - map True/False to 1/0 explicitly
     binary_cols = ['Amenity', 'Bump', 'Crossing', 'Give_Way', 'Junction', 'No_Exit',
-                  'Railway', 'Roundabout', 'Station', 'Stop', 'Traffic_Calming', 'Traffic_Signal']
+                   'Railway', 'Roundabout', 'Station', 'Stop', 'Traffic_Calming', 'Traffic_Signal']
     
     for col in binary_cols:
         df[col] = df[col].map({True: 1, False: 0})
@@ -95,11 +95,19 @@ def encode_binary_features(df: pd.DataFrame, logger) -> pd.DataFrame:
     # Convert Sunrise_Sunset
     df['Sunrise_Sunset'] = df['Sunrise_Sunset'].map({'Day': 1, 'Night': 0})
 
-    # Create dummies for remaining categoricals
+    # Create dummies for remaining categorical columns
     df = pd.get_dummies(df, columns=['Source', 'Wind_Direction'], drop_first=True)
-
+    
+    # Map dummy columns to 1/0 explicitly (if needed)
+    dummy_cols = [col for col in df.columns if col.startswith('Source_') or col.startswith('Wind_Direction_')]
+    for col in dummy_cols:
+        df[col] = df[col].map({True: 1, False: 0, 1: 1, 0: 0}).fillna(0).astype(int)
+        logger.info(f"Mapped dummy column {col} to 0/1 explicitly")
+    
     logger.info(f"Final dataframe shape: {df.shape}")
     return df
+
+
 
 def process_features(input_path: str, output_path: str, log_file: str) -> pd.DataFrame:
     """Orchestrates the complete feature engineering process."""
