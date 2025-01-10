@@ -1,10 +1,18 @@
 stages:
   data_ingestion_cleaning:
-    desc: apply basic cleaning and remove unwanted/columns with missing values and
-      stores the cleaned data
+    desc: apply basic cleaning and remove unwanted/columns with missing values and stores the cleaned data
     cmd: python .\src\data_cleaning.py --force
     deps:
     - .\data\raw\sampled_data.csv
     - .\src\data_cleaning.py
     outs:
-    - .\data\processed\
+    - .\data\interim\cleaned_data.csv
+
+  feature_engineering:
+    desc: step to handle categorical and imputation of numerical data
+    cmd: python .\src\feature_engineering.py
+    deps:
+    - .\data\interim\cleaned_data.csv
+    - .\src\feature_engineering.py
+    outs:
+    - .\data\processed\featured_data.csv

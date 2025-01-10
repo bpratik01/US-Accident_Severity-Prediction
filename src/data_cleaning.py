@@ -87,5 +87,5 @@ def ingest_data(file_path: str, log_file: str, output_path: str) -> pd.DataFrame
 if __name__ == "__main__":
     file_path = './data/raw/sampled_data.csv'
     log_file = './logs/data_ingestion.log'
-    output_path = './data/processed/cleaned_data.csv'
+    output_path = './data/interim/cleaned_data.csv'
     processed_df = ingest_data(file_path, log_file, output_path)
