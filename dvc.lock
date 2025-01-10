@@ -1,0 +1,19 @@
+schema: '2.0'
+stages:
+  data_ingestion_cleaning:
+    cmd: python .\src\data_cleaning.py --force
+    deps:
+    - path: .\data\raw\sampled_data.csv
+      hash: md5
+      md5: d0eb920569498f90d0c0932cc2252217
+      size: 153913561
+    - path: .\src\data_cleaning.py
+      hash: md5
+      md5: 16645a130c168ae5e627450c3876186f
+      size: 3715
+    outs:
+    - path: .\data\processed\
+      hash: md5
+      md5: e1a56aff41a2aadf41a3cd45c013d533.dir
+      size: 70490553
+      nfiles: 1

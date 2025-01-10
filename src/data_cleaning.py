@@ -3,6 +3,7 @@ import pandas as pd
 from typing import List
 from logger import setup_logger
 from datetime import datetime
+import os
 
 def read_data(file_path: str, logger) -> pd.DataFrame:
     """Reads and returns data from a CSV file."""
@@ -46,11 +47,23 @@ def drop_columns(df: pd.DataFrame, columns_to_drop: List[str], logger) -> pd.Dat
 def save_data(df: pd.DataFrame, output_path: str, logger) -> None:
     """Saves processed data to CSV file."""
     logger.info(f"Saving cleaned data to {output_path}")
+    
+    # Create output directory if it doesn't exist
+    output_dir = os.path.dirname(output_path)
+    if output_dir and not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        logger.info(f"Created directory: {output_dir}")
+    
     df.to_csv(output_path, index=False)
     logger.info(f"Successfully saved {len(df)} rows")
 
 def ingest_data(file_path: str, log_file: str, output_path: str) -> pd.DataFrame:
     """Handles the complete data processing pipeline and returns cleaned dataframe."""
+    # Create logs directory if it doesn't exist
+    log_dir = os.path.dirname(log_file)
+    if log_dir and not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    
     logger = setup_logger('DataIngestion', log_file)
     logger.info(f"Starting data ingestion process at {datetime.now()}")
     
