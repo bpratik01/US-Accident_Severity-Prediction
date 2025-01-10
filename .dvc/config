@@ -1,0 +1,4 @@
+[core]
+    remote = usap
+['remote "usap"']
+    url = E:/Data_versioning/USAP
