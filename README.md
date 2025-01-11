@@ -69,9 +69,7 @@ The project is organized into the following directories:
    - Validated the robustness of the model with extensive testing.  
 
 ---
-Yes, you're correct! Before running `dvc repro`, they need to initialize DVC in the repository if it hasn't been done already. Here's the updated "How to Use" section that includes initializing DVC:
 
----
 
 ## How to Use  
 
