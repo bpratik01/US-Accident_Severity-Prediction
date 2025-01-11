@@ -32,3 +32,57 @@ stages:
       hash: md5
       md5: b5d76f8c65dc8a814246da67bc130311
       size: 58950004
+  train:
+    cmd: python src/model_building.py
+    deps:
+    - path: .\src\model_building.py
+      hash: md5
+      md5: eb98373d3f4a7e8860d14356d0750829
+      size: 6089
+    - path: data/processed/featured_data.csv
+      hash: md5
+      md5: b5d76f8c65dc8a814246da67bc130311
+      size: 58950004
+    - path: params.yaml
+      hash: md5
+      md5: c617f3397bb2d0a84ea4aa161a538fda
+      size: 732
+    params:
+      params.yaml:
+        feature_params:
+          quantile_cols:
+          - Temperature(F)
+          - Humidity(%)
+          - Pressure(in)
+          - Visibility(mi)
+          - Wind_Speed(mph)
+          - Total_Time
+          - Start_Lng
+          - Start_Lat
+          categorical_cols:
+          - City
+          - County
+          - State
+        split_params:
+          test_size: 0.1
+          val_size: 0.167
+          random_state: 42
+        xgb_params:
+          max_depth: 5
+          learning_rate: 0.1
+          n_estimators: 200
+          min_child_weight: 3
+          gamma: 0.1
+          subsample: 0.8
+          colsample_bytree: 0.8
+          random_state: 42
+    outs:
+    - path: logs/model_building.log
+      hash: md5
+      md5: 0fe2e2f9497a8cc5d0c413a6ac1029fe
+      size: 1410
+    - path: models
+      hash: md5
+      md5: b995abf0b662da893da4fbdc3b2fe955.dir
+      size: 2935360
+      nfiles: 4
