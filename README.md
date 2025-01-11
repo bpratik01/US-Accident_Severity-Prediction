@@ -1,57 +1,124 @@
-US_Accident_Severity_Prediction
-==============================
-
-A short description of the project.
-
-Project Organization
-------------
-
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
 
 
---------
+# US Accident Severity Prediction using XGBoost  
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+This project focuses on predicting accident severity in the United States using advanced machine learning techniques, specifically XGBoost. By leveraging historical accident data and applying data preprocessing, feature engineering, and model tuning, we aim to create a reliable prediction system that can aid decision-making for traffic management and public safety.
+
+---
+
+## Project Overview  
+
+The main goal of this project is to predict the **severity of accidents** based on historical data. We have taken a methodical approach to build and evaluate machine learning models, incorporating steps like data cleaning, feature engineering, hyperparameter tuning, and performance optimization.  
+
+Some key highlights:  
+- **Model Used**: XGBoost, chosen for its robustness and ability to handle imbalanced datasets.  
+- **Techniques**: We utilized **SMOTE** and **class weights** to address imbalanced classes and ensure the model performs well across all severity levels.  
+- **Optimization**: Hyperparameter tuning was performed to maximize model accuracy and F1 scores.  
+
+---
+
+## Project Structure  
+
+The project is organized into the following directories:  
+
+```plaintext
+├── data
+│   ├── raw            <- Original, unprocessed data.
+│   ├── interim        <- Data after initial cleaning and transformations.
+│   ├── processed      <- Final datasets used for modeling.
+│
+├── models
+│   └── xgb_model_<timestamp> <- Serialized XGBoost models and evaluation results.
+│
+├── notebooks          <- Jupyter notebooks for exploration and experiments.
+│
+├── src
+│   ├── data_cleaning.py       <- Scripts for cleaning and preprocessing raw data.
+│   ├── feature_engineering.py <- Feature engineering and transformation logic.
+│   ├── model_building.py      <- Code for training and tuning XGBoost models.
+│   ├── model_eval.py          <- Evaluation scripts for the trained models.
+│   ├── logger.py              <- Logging utility for tracking progress and debugging.
+│
+├── requirements.txt   <- Python libraries and dependencies used in this project.
+├── README.md          <- You are here!
+├── .env               <- Configuration file for managing environment variables.
+├── .gitignore         <- Files and folders excluded from version control.
+├── LICENSE            <- Licensing information for the project.
+```
+
+---
+
+## What’s Been Done So Far  
+
+1. **Data Cleaning**: 
+   - Removed redundant or missing entries.  
+   - Standardized columns for consistency.  
+
+2. **Feature Engineering**:  
+   - Created meaningful features such as weather conditions, traffic volume, and time of the day.  
+   - Applied scaling and encoding where necessary.  
+
+3. **Model Training and Tuning**:  
+   - Implemented **XGBoost** as the primary model.  
+   - Addressed **class imbalance** using SMOTE and class weights.  
+   - Tuned hyperparameters to boost performance (accuracy: ~87.65%, weighted F1-score: ~87.77%).  
+
+4. **Evaluation**:  
+   - Assessed precision, recall, and F1-score across all severity levels.  
+   - Validated the robustness of the model with extensive testing.  
+
+---
+
+
+## How to Use  
+
+1. Clone the repository:  
+   ```bash
+   git clone <repository_url>
+   cd US-Accident_Severity-Prediction
+   ```
+
+2. Set up the environment:  
+   - Install dependencies from `requirements.txt`:  
+     ```bash
+     pip install -r requirements.txt
+     ```  
+   - Configure the `.env` file with necessary variables.  
+
+3. Initialize DVC:  
+   - If you haven't already initialized DVC, do so with the following command:  
+     ```bash
+     dvc init
+     ```
+
+4. Reproduce the results using DVC:  
+   - Run the DVC pipeline to reproduce the entire process (data preprocessing, model training, and evaluation):  
+     ```bash
+     dvc repro
+     ```
+
+This command will automatically execute the necessary steps and rebuild the model if the data or code has changed.
+
+---
+
+Let me know if there's anything else you want to adjust!
+
+## Results  
+
+Our model demonstrates significant improvement in predicting accident severity, with optimized performance across imbalanced classes. The following are key metrics:  
+
+| Class | Precision | Recall | F1-Score |  
+|-------|-----------|--------|----------|  
+| Low Severity (0) | 45.58%  | 65.83%   | 53.86%   |  
+| Moderate Severity (1) | 93.08% | 91.85% | 92.46%   |  
+| High Severity (2) | 71.38%  | 74.81%   | 73.05%   |  
+| Severe (3) | 52.84%  | 49.99%   | 51.38%   |  
+
+---
+
+## Future Improvements  
+- Enhance feature engineering by incorporating geographic and demographic data.   
+- Use of DL methods tho further improve the performance
+---
+
+Feel free to tweak further!
