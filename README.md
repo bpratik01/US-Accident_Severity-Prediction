@@ -26,7 +26,6 @@ The project is organized into the following directories:
 │   ├── raw            <- Original, unprocessed data.
 │   ├── interim        <- Data after initial cleaning and transformations.
 │   ├── processed      <- Final datasets used for modeling.
-│   ├── external       <- Any third-party data sources used.
 │
 ├── models
 │   └── xgb_model_<timestamp> <- Serialized XGBoost models and evaluation results.
@@ -119,7 +118,7 @@ Our model demonstrates significant improvement in predicting accident severity, 
 
 ## Future Improvements  
 - Enhance feature engineering by incorporating geographic and demographic data.   
-
+- Use of DL methods tho further improve the performance
 ---
 
 Feel free to tweak further!
