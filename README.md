@@ -1,57 +1,22 @@
-US_Accident_Severity_Prediction
-==============================
-
-A short description of the project.
-
-Project Organization
-------------
-
-    ├── LICENSE
-    ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
-    │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
-    │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-    │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
-
-
---------
-
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+├── data
+│   ├── raw            <- Original, unprocessed data.
+│   ├── interim        <- Data after initial cleaning and transformations.
+│   ├── processed      <- Final datasets used for modeling.
+│
+├── models
+│   └── xgb_model_<timestamp> <- Serialized XGBoost models and evaluation results.
+│
+├── notebooks          <- Jupyter notebooks for exploration and experiments.
+│
+├── src
+│   ├── data_cleaning.py       <- Scripts for cleaning and preprocessing raw data.
+│   ├── feature_engineering.py <- Feature engineering and transformation logic.
+│   ├── model_building.py      <- Code for training and tuning XGBoost models.
+│   ├── model_eval.py          <- Evaluation scripts for the trained models.
+│   ├── logger.py              <- Logging utility for tracking progress and debugging.
+│
+├── requirements.txt   <- Python libraries and dependencies used in this project.
+├── README.md          <- You are here!
+├── .env               <- Configuration file for managing environment variables.
+├── .gitignore         <- Files and folders excluded from version control.
+├── LICENSE            <- Licensing information for the project.
