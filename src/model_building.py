@@ -11,6 +11,7 @@ from sklearn.preprocessing import QuantileTransformer
 from logger import setup_logger
 from datetime import datetime
 from imblearn.over_sampling import SMOTE  # Import SMOTE
+from sklearn.utils.class_weight import compute_class_weight  # To compute class weights
 
 def create_model_directory(base_dir: str, model_name: str) -> str:
     """Creates and returns a timestamped model directory."""
@@ -86,7 +87,7 @@ def apply_smote(X_train: pd.DataFrame, y_train: pd.Series, logger) -> Tuple[pd.D
     """Applies SMOTE to balance the dataset."""
     logger.info("Applying SMOTE to balance the dataset")
     
-    smote = SMOTE(random_state=42,  sampling_strategy='auto')
+    smote = SMOTE(random_state=42, sampling_strategy='auto')
     X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
     
     logger.info(f"SMOTE applied: X_train shape {X_train_balanced.shape}, y_train shape {y_train_balanced.shape}")
@@ -143,10 +144,18 @@ def build_model(params_path: str) -> None:
     # Apply SMOTE to balance training data
     X_train_balanced, y_train_balanced = apply_smote(X_train_encoded, y_train, logger)
     
-    # Train model with specified parameters
+    # Compute class weights based on the training set
+    class_weights = compute_class_weight('balanced', classes=np.unique(y_train_balanced), y=y_train_balanced)
+    class_weight_dict = dict(zip(np.unique(y_train_balanced), class_weights))
+    
+    logger.info(f"Computed class weights: {class_weight_dict}")
+    
+    # Train model with class weights
     logger.info("Training model with specified parameters")
     model = XGBClassifier(**params['xgb_params'])
-    model.fit(X_train_balanced, y_train_balanced)
+    
+    # Pass the class weights to the model
+    model.fit(X_train_balanced, y_train_balanced, sample_weight=y_train_balanced.map(class_weight_dict))
     
     # Save artifacts
     save_artifacts(model, transformer, encoder, model_dir, params, logger)
