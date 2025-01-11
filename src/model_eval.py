@@ -11,7 +11,6 @@ import yaml
 
 def load_latest_model(models_dir: str) -> tuple:
     """Load the most recent model and its artifacts."""
-    # Get all model directories
     model_dirs = glob(os.path.join(models_dir, "*"))
     if not model_dirs:
         raise ValueError("No model directories found")
@@ -31,13 +30,10 @@ def load_latest_model(models_dir: str) -> tuple:
 
 def prepare_evaluation_data(data_path: str, transformer, encoder, params):
     """Prepare data for evaluation using saved transformers."""
-    # Load data
     df = pd.read_csv(data_path)
     
-    # Transform features
     df[params['feature_params']['quantile_cols']] = transformer.transform(df[params['feature_params']['quantile_cols']])
     
-    # Prepare X and y
     X = df.drop(columns=['Severity'])
     y = df['Severity'] - 1
     
@@ -48,10 +44,8 @@ def prepare_evaluation_data(data_path: str, transformer, encoder, params):
 
 def create_evaluation_artifacts(model, X, y):
     """Create and save evaluation artifacts."""
-    # Ensure evaluation directory exists
     os.makedirs('evaluation', exist_ok=True)
     
-    # Get predictions
     y_pred = model.predict(X)
     
     # Calculate metrics
@@ -61,7 +55,6 @@ def create_evaluation_artifacts(model, X, y):
         "classification_report": classification_report(y, y_pred, output_dict=True)
     }
     
-    # Save metrics
     with open('evaluation/metrics.json', 'w') as f:
         json.dump(metrics, f, indent=4)
     
@@ -93,10 +86,8 @@ def create_evaluation_artifacts(model, X, y):
 
 def main():
     """Main function to run model evaluation."""
-    # Load latest model and artifacts
     model, transformer, encoder, params = load_latest_model('models')
     
-    # Prepare evaluation data
     X, y = prepare_evaluation_data(
         'data/processed/featured_data.csv',
         transformer,
@@ -104,7 +95,6 @@ def main():
         params
     )
     
-    # Create evaluation artifacts
     create_evaluation_artifacts(model, X, y)
 
 if __name__ == "__main__":

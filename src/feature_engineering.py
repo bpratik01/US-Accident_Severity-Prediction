@@ -20,13 +20,11 @@ def handle_missing_values(df: pd.DataFrame, logger) -> pd.DataFrame:
 
     logger.info("Handling missing values")
 
-    # Mode imputation for categorical
     for col in categorical_columns:
         before_count = df[col].isna().sum()
         df[col] = df[col].fillna(df[col].mode()[0])
         logger.info(f"Filled {before_count} missing values in {col} using mode")
 
-    # Median imputation for numerical
     for col in numerical_columns:
         before_count = df[col].isna().sum()
         df[col] = df[col].fillna(df[col].median())
@@ -92,13 +90,10 @@ def encode_binary_features(df: pd.DataFrame, logger) -> pd.DataFrame:
         df[col] = df[col].map({True: 1, False: 0})
         logger.info(f"Converted {col} to binary (0/1): Counts - 1s: {df[col].sum()}, 0s: {len(df[col]) - df[col].sum()}")
 
-    # Convert Sunrise_Sunset
     df['Sunrise_Sunset'] = df['Sunrise_Sunset'].map({'Day': 1, 'Night': 0})
 
-    # Create dummies for remaining categorical columns
     df = pd.get_dummies(df, columns=['Source', 'Wind_Direction'], drop_first=True)
     
-    # Map dummy columns to 1/0 explicitly (if needed)
     dummy_cols = [col for col in df.columns if col.startswith('Source_') or col.startswith('Wind_Direction_')]
     for col in dummy_cols:
         df[col] = df[col].map({True: 1, False: 0, 1: 1, 0: 0}).fillna(0).astype(int)
@@ -111,7 +106,6 @@ def encode_binary_features(df: pd.DataFrame, logger) -> pd.DataFrame:
 
 def process_features(input_path: str, output_path: str, log_file: str) -> pd.DataFrame:
     """Orchestrates the complete feature engineering process."""
-    # Create log directory if needed
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
     logger = setup_logger('FeatureEngineering', log_file)
 
@@ -123,10 +117,8 @@ def process_features(input_path: str, output_path: str, log_file: str) -> pd.Dat
     df = encode_weather_conditions(df, logger)
     df = encode_binary_features(df, logger)
 
-    # Create output directory if needed
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    # Save processed data
     logger.info(f"Saving processed data to {output_path}")
     df.to_csv(output_path, index=False)
     logger.info("Feature engineering completed successfully")

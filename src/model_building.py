@@ -48,7 +48,6 @@ def transform_features(df: pd.DataFrame, quantile_cols: list, logger) -> Tuple[p
     return df, transformer
 
 def prepare_data(df: pd.DataFrame, target_col: str, logger) -> Tuple[pd.DataFrame, pd.Series]:
-    """Prepares features and target for modeling."""
     logger.info("Preparing features and target")
     
     X = df.drop(columns=[target_col])
@@ -72,7 +71,6 @@ def split_data(X: pd.DataFrame, y: pd.Series, test_size: float, val_size: float,
 
 def encode_categorical(X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame,
                       y_train: pd.Series, cat_cols: list, logger) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, TargetEncoder]:
-    """Applies target encoding to categorical features."""
     logger.info("Applying target encoding to categorical features")
     
     encoder = TargetEncoder(cols=cat_cols)
@@ -98,12 +96,10 @@ def save_artifacts(model: XGBClassifier, transformer: QuantileTransformer,
     """Saves model and preprocessing artifacts."""
     logger.info(f"Saving model artifacts to {model_dir}")
     
-    # Save model and preprocessors
     joblib.dump(model, os.path.join(model_dir, "model.joblib"))
     joblib.dump(transformer, os.path.join(model_dir, "quantile_transformer.joblib"))
     joblib.dump(encoder, os.path.join(model_dir, "target_encoder.joblib"))
     
-    # Save parameters used for this model
     with open(os.path.join(model_dir, "model_params.yaml"), 'w') as f:
         yaml.dump(params, f)
     
@@ -111,18 +107,14 @@ def save_artifacts(model: XGBClassifier, transformer: QuantileTransformer,
 
 def build_model(params_path: str) -> None:
     """Orchestrates the model building pipeline."""
-    # Load parameters
     params = load_params(params_path)
     
-    # Create model directory
     model_dir = create_model_directory(params['paths']['model_dir'], params['paths']['model_name'])
     
-    # Setup logging
     os.makedirs(params['paths']['log_dir'], exist_ok=True)
     log_file = os.path.join(params['paths']['log_dir'], f"model_building_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
     logger = setup_logger('ModelBuilding', log_file)
     
-    # Execute pipeline
     df = load_data(params['paths']['input_path'], logger)
     df, transformer = transform_features(df, params['feature_params']['quantile_cols'], logger)
     X, y = prepare_data(df, 'Severity', logger)
@@ -141,20 +133,16 @@ def build_model(params_path: str) -> None:
         logger
     )
     
-    # Apply SMOTE to balance training data
     X_train_balanced, y_train_balanced = apply_smote(X_train_encoded, y_train, logger)
     
-    # Compute class weights based on the training set
     class_weights = compute_class_weight('balanced', classes=np.unique(y_train_balanced), y=y_train_balanced)
     class_weight_dict = dict(zip(np.unique(y_train_balanced), class_weights))
     
     logger.info(f"Computed class weights: {class_weight_dict}")
     
-    # Train model with class weights
     logger.info("Training model with specified parameters")
     model = XGBClassifier(**params['xgb_params'])
     
-    # Pass the class weights to the model
     model.fit(X_train_balanced, y_train_balanced, sample_weight=y_train_balanced.map(class_weight_dict))
     
     # Save artifacts
