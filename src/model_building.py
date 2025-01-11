@@ -10,11 +10,13 @@ from category_encoders import TargetEncoder
 from sklearn.preprocessing import QuantileTransformer
 from logger import setup_logger
 from datetime import datetime
+from imblearn.over_sampling import SMOTE  # Import SMOTE
 
 def create_model_directory(base_dir: str, model_name: str) -> str:
     """Creates and returns a timestamped model directory."""
     os.makedirs(base_dir, exist_ok=True)
     
+    # Create timestamped directory for this model run
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     model_dir = os.path.join(base_dir, f"{model_name}_{timestamp}")
     os.makedirs(model_dir, exist_ok=True)
@@ -80,6 +82,16 @@ def encode_categorical(X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.Da
     logger.info("Completed target encoding")
     return X_train_encoded, X_val_encoded, X_test_encoded, encoder
 
+def apply_smote(X_train: pd.DataFrame, y_train: pd.Series, logger) -> Tuple[pd.DataFrame, pd.Series]:
+    """Applies SMOTE to balance the dataset."""
+    logger.info("Applying SMOTE to balance the dataset")
+    
+    smote = SMOTE(random_state=42,  sampling_strategy='auto')
+    X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
+    
+    logger.info(f"SMOTE applied: X_train shape {X_train_balanced.shape}, y_train shape {y_train_balanced.shape}")
+    return X_train_balanced, y_train_balanced
+
 def save_artifacts(model: XGBClassifier, transformer: QuantileTransformer, 
                   encoder: TargetEncoder, model_dir: str, params: Dict, logger) -> None:
     """Saves model and preprocessing artifacts."""
@@ -106,10 +118,8 @@ def build_model(params_path: str) -> None:
     
     # Setup logging
     os.makedirs(params['paths']['log_dir'], exist_ok=True)
-    log_file = os.path.join(params['paths']['log_dir'], "model_building.log")  # Consistent filename
+    log_file = os.path.join(params['paths']['log_dir'], f"model_building_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
     logger = setup_logger('ModelBuilding', log_file)
-    
-    logger.info("Starting model building pipeline")
     
     # Execute pipeline
     df = load_data(params['paths']['input_path'], logger)
@@ -130,10 +140,13 @@ def build_model(params_path: str) -> None:
         logger
     )
     
+    # Apply SMOTE to balance training data
+    X_train_balanced, y_train_balanced = apply_smote(X_train_encoded, y_train, logger)
+    
     # Train model with specified parameters
     logger.info("Training model with specified parameters")
     model = XGBClassifier(**params['xgb_params'])
-    model.fit(X_train_encoded, y_train)
+    model.fit(X_train_balanced, y_train_balanced)
     
     # Save artifacts
     save_artifacts(model, transformer, encoder, model_dir, params, logger)

@@ -37,8 +37,8 @@ stages:
     deps:
     - path: .\src\model_building.py
       hash: md5
-      md5: eb98373d3f4a7e8860d14356d0750829
-      size: 6089
+      md5: b5152a6f323ad7ba68202a019b644857
+      size: 6840
     - path: data/processed/featured_data.csv
       hash: md5
       md5: b5d76f8c65dc8a814246da67bc130311
@@ -77,12 +77,37 @@ stages:
           colsample_bytree: 0.8
           random_state: 42
     outs:
-    - path: logs/model_building.log
-      hash: md5
-      md5: 0fe2e2f9497a8cc5d0c413a6ac1029fe
-      size: 1410
     - path: models
       hash: md5
-      md5: b995abf0b662da893da4fbdc3b2fe955.dir
-      size: 2935360
+      md5: 9c340f97ebbaf97c179c2f5674f938ca.dir
+      size: 3069660
       nfiles: 4
+  evaluate:
+    cmd: python src/model_eval.py
+    deps:
+    - path: data/processed/featured_data.csv
+      hash: md5
+      md5: b5d76f8c65dc8a814246da67bc130311
+      size: 58950004
+    - path: models
+      hash: md5
+      md5: 9c340f97ebbaf97c179c2f5674f938ca.dir
+      size: 3069660
+      nfiles: 4
+    - path: src/model_eval.py
+      hash: md5
+      md5: eb4c7ac467009c0c1fb8d1e6985ecdc8
+      size: 3708
+    outs:
+    - path: evaluation/confusion_matrix.png
+      hash: md5
+      md5: d84eba1e07493b4430eef7798407f765
+      size: 29041
+    - path: evaluation/feature_importance.png
+      hash: md5
+      md5: 5a9a99268e96a2440daf2c6fc5bfa9ee
+      size: 35823
+    - path: evaluation/metrics.json
+      hash: md5
+      md5: 68a2ee742ad5b2eed8bc92c2352f4ba7
+      size: 1343

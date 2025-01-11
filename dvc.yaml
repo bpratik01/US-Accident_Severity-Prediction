@@ -31,6 +31,15 @@ stages:
     - split_params
     - xgb_params
     outs:
-    - logs/model_building.log
-    
     - models
+
+  evaluate:
+    cmd: python src/model_eval.py
+    deps:
+    - data/processed/featured_data.csv
+    - models
+    - src/model_eval.py
+    outs:
+    - evaluation/confusion_matrix.png
+    - evaluation/feature_importance.png
+    - evaluation/metrics.json
